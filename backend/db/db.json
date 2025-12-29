@@ -1,0 +1,42 @@
+[
+  {
+    "id": 6,
+    "arguments": "{\"company_name\":\"KOKIE AUTO SERVICE\",\"vat_exempt_sales\":\"1607.14\",\"date\":\"7-31-23\",\"total_amount\":\"16,000\",\"description\":\"Cleaning & leak test, replacement of filter dryer, cooling coil, cabin filter, auxiliary fan.\",\"status\":\"AI\"}",
+    "imageName": "328.jpeg",
+    "createdAt": "2025-12-29T09:05:00.749Z"
+  },
+  {
+    "id": 5,
+    "arguments": "{\"company_name\":\"SMH-Milagrosa Gasoline Station (Shell)\",\"vat_exempt_sales\":\"Not specified\",\"date\":\"06/05/2025\",\"total_amount\":\"2,318.88\",\"description\":\"FS Diesel, Quantity: 43.150\",\"status\":\"AI\"}",
+    "imageName": "342.jpeg",
+    "createdAt": "2025-12-29T09:04:15.051Z"
+  },
+  {
+    "id": 4,
+    "arguments": "{\"company_name\":\"SMH-Milagrosa Gasoline STN (Shell)\",\"vat_exempt_sales\":\"\",\"date\":\"06/05/2025\",\"total_amount\":\"2,318.88\",\"description\":\"FS Diesel, Quantity: 43.150\",\"status\":\"AI\"}",
+    "imageName": "342.jpeg",
+    "createdAt": "2025-12-29T09:02:53.472Z"
+  },
+  {
+    "id": 3,
+    "arguments": "{\"company_name\":\"SMH-Milagrosa Gasoline Station (Shell)\",\"vat_exempt_sales\":\"Not specified\",\"date\":\"06/06/2025\",\"total_amount\":\"2,318.88\",\"description\":\"FS Diesel, Quantity: 43.150 liters\",\"status\":\"Updated\"}",
+    "imageName": "342.jpeg",
+    "createdAt": "2025-12-29T09:00:29.817Z"
+  },
+  {
+    "id": 2,
+    "arguments": "{\"company_name\":\"Kokie Auto Servicee\",\"vat_exempt_sales\":\"1,607.14\",\"date\":\"7-31-23\",\"total_amount\":\"16,000\",\"description\":\"Cleaning & leak test, replacement of filter drier, cooling coil, cabin filter, auxiliary fan\",\"status\":\"Updated\"}",
+    "imageName": "328.jpeg"
+  },
+  {
+    "id": 1,
+    "arguments": "{\"company_name\":\"1988 Restaurant Corporation\",\"vat_exempt_sales\":\"N/A\",\"date\":\"No specific date readable\",\"total_amount\":\"1,899\",\"description\":\"Service invoice for E4COMM CORP. Items: MAL (1 - 400), Butch (4 - 99), Puto (40 - 380), Samotah (20 - amount unclear). Total sales: 1,779. Discounts and VAT adjustments applied. Final total: 1,899.\"}",
+    "imageName": "327.jpeg"
+  },
+  {
+    "id": 7,
+    "arguments": "{\"company_name\":\"KOKIE AUTO SERVICE\",\"vat_exempt_sales\":\"1607.14\",\"date\":\"07/31/2023\",\"total_amount\":\"16000\",\"description\":\"Cleaning & leak test, replacement of filter drier, cooling coil, cabin filter, auxiliary fan.\",\"status\":\"AI\"}",
+    "imageName": "328.jpeg",
+    "createdAt": "2025-12-29T09:12:45.633Z"
+  }
+]

@@ -1,0 +1,120 @@
+//@ts-nocheck
+import axios from "axios";
+import type {AxiosRequestConfig } from "axios";
+import { useState } from "react";
+import { useReceipt } from "@/context/ReceiptContext";
+
+interface UseApiReturn<T>{
+    loading: boolean;
+    error: string | null;
+    getReceipt: (url: string, config?: AxiosRequestConfig) => Promise<void>;
+    uploadReceipt: (url: string, body?: any,  config?: AxiosRequestConfig) => Promise<void>;
+    exportReceipts: (url: string, body?: any, config?: AxiosRequestConfig) => Promise<void>;
+    editReceipt: (url: string, body?: any,  config?: AxiosRequestConfig) => Promise<void>;
+    del: (url: string, config?: AxiosRequestConfig) => Promise<void>;
+}
+
+let apiClient: any;
+const base_url = import.meta.env.VITE_API_BASE_URL;
+console.log(base_url)
+// Initialize apiClient synchronously
+apiClient = axios.create({
+    baseURL: base_url,
+    headers: {
+
+    },
+
+});
+
+
+
+export const useApi = <T = any>(): UseApiReturn<T> => {
+    const {addReceipts, addExportData, updateAlert} = useReceipt();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleRequest = async (request: () => Promise<any>) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await request()
+            addReceipts(response.data);
+        } catch (err: any) {
+            setError(err?.response?.data?.message || "Something went wrong");
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleGetRequest = async (request: () => Promise<any>) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await request()
+            addReceipts(response.data.data);
+        } catch (err: any) {
+            setError(err?.response?.data?.message || "Something went wrong");
+        } finally {
+            setLoading(false)
+        }
+    }
+
+     const handleUploadReceipt = async (request: () => Promise<any>) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await request()
+            updateAlert({message: "Export Success!", alive: true})
+            // addReceipts(response.data);
+        } catch (err: any) {
+            updateAlert({status: "error", message: err?.response?.data?.message || "Something went wrong", alive: true})
+            setError(err?.response?.data?.message || "Something went wrong");
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleExportRequest = async (request: () => Promise<any>) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await request()
+            addExportData(response.data)
+            updateAlert({message: "Export Success!", alive: true})
+        } catch (err: any) {
+            updateAlert({status: "error", message: err?.response?.data?.message || "Something went wrong", alive: true})
+            setError(err?.response?.data?.message || "Something went wrong");
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleEditRequest = async (request: () => Promise<any>) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await request()
+            updateAlert({...response.data, alive: true})
+        } catch (err: any) {
+            updateAlert({status: "error", message: err?.response?.data?.message || "Something went wrong", alive: true})
+            setError(err?.response?.data?.message || "Something went wrong");
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const getReceipt = (url: string, config?: AxiosRequestConfig) => handleGetRequest(() => apiClient.get(url, config))
+    const uploadReceipt = (url: string, body?: any,  config?: AxiosRequestConfig) => handleUploadReceipt(() => apiClient.post(url,body, config))
+    
+    const exportReceipts = (url: string, body?: any, config?: AxiosRequestConfig) => handleExportRequest(() => apiClient.post(url, body, config))
+
+    const editReceipt = (url: string, body?: any,  config?: AxiosRequestConfig) => handleEditRequest(() => apiClient.put(url,body, config))
+    const del = (url: string, config?: AxiosRequestConfig) => handleRequest(() => apiClient.delete(url, config))
+
+    return { loading, error, getReceipt, uploadReceipt, exportReceipts, editReceipt, del };
+}
