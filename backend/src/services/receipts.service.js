@@ -105,7 +105,7 @@ export default class ReceiptsService {
       createdAt: new Date(),
     };
 
-    this.repo.create(d);
+    await this.repo.create(d);
 
     return {
       error: false,
