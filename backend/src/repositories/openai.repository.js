@@ -13,15 +13,16 @@ const db = e.sort((a, b) => b.id - a.id); //decending
 export default class ReceiptRepository {
   constructor() {}
 
-  create(data) {
-    const id = Number(db.length) + 1;
+  async create(data) {
+    const maxId = db.length > 0 ? Math.max(...db.map((x) => x.id)) : 0;
+    const id = maxId + 1;
 
     db.push({
       id: id,
       ...data,
     });
 
-    fs.writeFileSync(filePath, JSON.stringify(db, null, 2), "utf-8");
+    await fs.writeFileSync(filePath, JSON.stringify(db, null, 2), "utf-8");
 
     return {
       id,
@@ -31,7 +32,7 @@ export default class ReceiptRepository {
   update(id, data) {
     const new_db = db.map((x) => {
       if (x.id === id) {
-        x = {
+        return {
           ...x,
           ...data,
         };
