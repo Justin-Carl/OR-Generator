@@ -46,7 +46,7 @@ const start = () => {
           return cb(new Error("Invalid origin"));
         }
 
-        const allowedHostnames = ["localhost", "34.81.183.170"];
+        const allowedHostnames = ["localhost", "34.126.144.53"];
         if (allowedHostnames.includes(hostname)) {
           return cb(null, true);
         } else {
