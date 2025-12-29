@@ -6,14 +6,26 @@ import fs from "fs";
 import path from "path";
 
 const filePath = path.join(process.cwd(), "db", "db.json");
-const fileContent = fs.readFileSync(filePath, "utf-8");
-const e = JSON.parse(fileContent); // array
-const db = e.sort((a, b) => b.id - a.id); //decending
+// const fileContent = fs.readFileSync(filePath, "utf-8");
+// const e = JSON.parse(fileContent); // array
+// const db = e.sort((a, b) => b.id - a.id); //decending
 
 export default class ReceiptRepository {
   constructor() {}
+  // Read JSON fresh from file
+  _readFile() {
+    const fileContent = fs.readFileSync(filePath, "utf-8");
+    const db = JSON.parse(fileContent);
+    return db.sort((a, b) => b.id - a.id); // descending
+  }
+
+  _writeFile(db) {
+    fs.writeFileSync(filePath, JSON.stringify(db, null, 2), "utf-8");
+  }
 
   async create(data) {
+    const db = this._readFile();
+
     const maxId = db.length > 0 ? Math.max(...db.map((x) => x.id)) : 0;
     const id = maxId + 1;
 
@@ -30,6 +42,8 @@ export default class ReceiptRepository {
   }
 
   update(id, data) {
+    const db = this._readFile();
+
     const new_db = db.map((x) => {
       if (x.id === id) {
         return {
@@ -41,7 +55,7 @@ export default class ReceiptRepository {
       return x;
     });
 
-    fs.writeFileSync(filePath, JSON.stringify(new_db, null, 2), "utf-8");
+    this._writeFile(new_db);
 
     return {
       id,
@@ -49,6 +63,8 @@ export default class ReceiptRepository {
   }
 
   read({ page = 1, pageSize = 10, filter = [] }) {
+    const db = this._readFile();
+
     let list = db;
     let totalItems = list.length;
     let totalPages = 0;
