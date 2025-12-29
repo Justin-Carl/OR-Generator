@@ -13,7 +13,7 @@ const Receipt = (app, opts, done) => {
   app.post("/upload", UploadReceiptsSchema);
   app.get("/", GetReceiptsSchema);
   app.post("/export", ExportReceiptSchema);
-  app.put("/", EditReceiptsSchema);
+  app.post("/edit", EditReceiptsSchema);
 
   done();
 };

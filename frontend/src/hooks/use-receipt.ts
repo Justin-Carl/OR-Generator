@@ -113,7 +113,7 @@ export const useApi = <T = any>(): UseApiReturn<T> => {
     
     const exportReceipts = (url: string, body?: any, config?: AxiosRequestConfig) => handleExportRequest(() => apiClient.post(url, body, config))
 
-    const editReceipt = (url: string, body?: any,  config?: AxiosRequestConfig) => handleEditRequest(() => apiClient.put(url,body, config))
+    const editReceipt = (url: string, body?: any,  config?: AxiosRequestConfig) => handleEditRequest(() => apiClient.post(url,body, config))
     const del = (url: string, config?: AxiosRequestConfig) => handleRequest(() => apiClient.delete(url, config))
 
     return { loading, error, getReceipt, uploadReceipt, exportReceipts, editReceipt, del };

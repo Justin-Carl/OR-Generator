@@ -42,7 +42,7 @@ const ReceiptDialog = ({ open, data, type, onChange }: ReceiptEditProps) => {
 
     const handleEdit = async () => {
         console.log(myData)
-        const res = await api.editReceipt("receipt/", myData);
+        const res = await api.editReceipt("receipt/edit", myData);
         console.log(res)
     }
 
