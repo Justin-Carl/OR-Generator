@@ -19,7 +19,7 @@ export default class UsersController {
 
     reply
       .setCookie("cookie_or_reader_07012026", encryptToken, {
-        domain: "",
+        // domain: "",
         path: "/",
         secure: false,
         sameSite: "Lax",
@@ -36,7 +36,7 @@ export default class UsersController {
   Logout = async (req, reply) => {
     reply
       .clearCookie("cookie_or_reader_07012026", {
-        domain: "",
+        // domain: "",
         path: "/",
         secure: false,
         httpOnly: true,
