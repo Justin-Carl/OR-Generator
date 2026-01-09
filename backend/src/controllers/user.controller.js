@@ -22,7 +22,7 @@ export default class UsersController {
         domain: "",
         path: "/",
         secure: true,
-        sameSite: "none",
+        sameSite: "Lax",
         httpOnly: true,
         maxAge: 180 * 24 * 60 * 60, // 180 days in seconds
       })
@@ -40,7 +40,7 @@ export default class UsersController {
         path: "/",
         secure: true,
         httpOnly: true,
-        sameSite: "none",
+        sameSite: "Lax",
       })
       .send({ result: "success", message: "Logged out!" });
   };
