@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 backend/db/db.json
+backend/assets/images/*
 
 *.local
 
