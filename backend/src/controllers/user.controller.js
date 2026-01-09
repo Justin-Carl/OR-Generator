@@ -21,7 +21,7 @@ export default class UsersController {
       .setCookie("cookie_or_reader_07012026", encryptToken, {
         domain: "",
         path: "/",
-        secure: true,
+        secure: false,
         sameSite: "Lax",
         httpOnly: true,
         maxAge: 180 * 24 * 60 * 60, // 180 days in seconds
@@ -38,7 +38,7 @@ export default class UsersController {
       .clearCookie("cookie_or_reader_07012026", {
         domain: "",
         path: "/",
-        secure: true,
+        secure: false,
         httpOnly: true,
         sameSite: "Lax",
       })
