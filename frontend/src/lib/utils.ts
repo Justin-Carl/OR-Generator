@@ -3,7 +3,6 @@ import { twMerge } from "tailwind-merge"
 import {
   browserName,
   browserVersion,
-  isMobile,
   mobileModel,
 } from "mobile-device-detect";
 
