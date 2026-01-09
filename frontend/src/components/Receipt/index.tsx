@@ -21,8 +21,12 @@ import UploadReceipt from "./UploadReceiptDialog"
 import ReceiptDialog from "./ReceiptDialog"
 import { useApi } from "@/hooks/use-receipt"
 import { useReceipt } from "@/context/ReceiptContext"
+import { useUser } from "@/context/UserContext"
+
 const Receipt = () => {
     const api = useApi();
+    const { token } = useUser();
+
     const { receipts, exportData } = useReceipt();
     const [data, setData] = useState<ReceiptType[]>([])
     const [isOpen, setOpen] = useState(false);
@@ -43,15 +47,17 @@ const Receipt = () => {
     }
 
     const getReceipts = async () => {
-        await api.getReceipt("receipt/");
+        await api.getReceipt("receipt/", { sort: [["id", "DESC"]] });
     }
 
     useEffect(() => {
-        getReceipts();
-    }, []);
+        if (token) {
+            getReceipts();
+        }
+
+    }, [token]);
 
     const handleExport = async (data: any) => {
-        console.log(data)
         const body = {
             filter: [{ column: "id", value: [data.id] }]
         }
@@ -74,12 +80,16 @@ const Receipt = () => {
     const handleData = () => {
         let new_data: ReceiptType[] = []
         receipts.list.forEach(x => {
-            x.arguments = JSON.parse(x.arguments);
-            const z = x.arguments
-            new_data.push({
-                id: x.id,
-                ...z
-            })
+            if (typeof x.arguments !== "object") {
+                x.arguments = JSON.parse(x.arguments);
+                const z = x.arguments
+                new_data.push({
+                    id: x.id,
+                    imageName: x.imageName,
+                    ...z
+                })
+            }
+
         });
 
         setData(new_data)
@@ -89,7 +99,6 @@ const Receipt = () => {
         if (receipts?.list.length > 0) {
             handleData()
         }
-        console.log(receipts)
     }, [receipts]);
 
     useEffect(() => {
@@ -102,7 +111,6 @@ const Receipt = () => {
             a.click();
             window.URL.revokeObjectURL(url);
         }
-        console.log(exportData)
     }, [exportData]);
 
     return (

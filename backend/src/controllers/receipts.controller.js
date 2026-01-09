@@ -14,6 +14,7 @@ export default class ReceiptsController {
   };
 
   getReceipts = async (req, reply) => {
+    console.log(">>>>>>", req.body);
     const result = await this.service.getReceipts(req);
     reply.send(result);
   };

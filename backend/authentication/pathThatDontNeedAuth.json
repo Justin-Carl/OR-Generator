@@ -1,0 +1,4 @@
+[
+  { "path": "/user/login", "method": "POST" },
+  { "path": "/user/check-session", "method": "GET" }
+]

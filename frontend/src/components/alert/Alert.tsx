@@ -1,6 +1,6 @@
 //@ts-nocheck
 import { AlertCircleIcon, CheckCircle2Icon, PopcornIcon } from "lucide-react"
-import { useReceipt } from "@/context/ReceiptContext";
+import { useAlert } from "@/context/AlertContext";
 
 import {
     Alert,
@@ -10,10 +10,9 @@ import {
 import { useEffect } from "react";
 
 export function AlertComp() {
-    const { alertData, updateAlert } = useReceipt();
+    const { alertData, updateAlert } = useAlert();
 
     useEffect(() => {
-        console.log(alertData)
         if (alertData?.alive) {
             setTimeout(() => {
                 updateAlert({ ...alertData, alive: false })

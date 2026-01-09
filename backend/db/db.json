@@ -1,5 +1,11 @@
 [
   {
+    "id": 7,
+    "arguments": "{\"company_name\":\"KOKIE AUTO SERVICE\",\"vat_exempt_sales\":\"1607.14\",\"date\":\"07/31/2023\",\"total_amount\":\"16000\",\"description\":\"Cleaning & leak test, replacement of filter drier, cooling coil, cabin filter, auxiliary fan.\",\"status\":\"AI\"}",
+    "imageName": "328.jpeg",
+    "createdAt": "2025-12-29T09:12:45.633Z"
+  },
+  {
     "id": 6,
     "arguments": "{\"company_name\":\"KOKIE AUTO SERVICE\",\"vat_exempt_sales\":\"1607.14\",\"date\":\"7-31-23\",\"total_amount\":\"16,000\",\"description\":\"Cleaning & leak test, replacement of filter dryer, cooling coil, cabin filter, auxiliary fan.\",\"status\":\"AI\"}",
     "imageName": "328.jpeg",
@@ -34,9 +40,9 @@
     "imageName": "327.jpeg"
   },
   {
-    "id": 7,
-    "arguments": "{\"company_name\":\"KOKIE AUTO SERVICE\",\"vat_exempt_sales\":\"1607.14\",\"date\":\"07/31/2023\",\"total_amount\":\"16000\",\"description\":\"Cleaning & leak test, replacement of filter drier, cooling coil, cabin filter, auxiliary fan.\",\"status\":\"AI\"}",
-    "imageName": "328.jpeg",
-    "createdAt": "2025-12-29T09:12:45.633Z"
+    "id": 8,
+    "arguments": "{\"company_name\":\"SMH-Milagrosa Gasoline Stn (Shell)\",\"vat_exempt_sales\":\"\",\"date\":\"06/05/2025\",\"total_amount\":\"2,318.88\",\"description\":\"FS Diesel purchase, quantity 43.150\",\"status\":\"AI\"}",
+    "imageName": "342.jpeg",
+    "createdAt": "2026-01-07T06:50:27.139Z"
   }
 ]

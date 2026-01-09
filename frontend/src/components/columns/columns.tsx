@@ -9,10 +9,13 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+import moment from 'moment'
+
 import { EllipsisVertical } from "lucide-react"
 import { Button } from "@/components/ui/button"
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
+import { formatMoney } from "@/lib/utils"
 
 export type ReceiptType = {
     id: number,
@@ -30,10 +33,20 @@ export const columns: ColumnDef<ReceiptType>[] = [
     {
         accessorKey: "date",
         header: "Date",
+        cell: ({ row }: any) => {
+            const data = row.original;
+
+            return moment(data.date).format('MMMM DD, YYYY');
+        }
     },
     {
         accessorKey: "total_amount",
         header: "Total Amount",
+        cell: ({ row }) => {
+            const data = row.original
+
+            return formatMoney(data.total_amount);
+        }
     },
     // {
     //     accessorKey: "status",

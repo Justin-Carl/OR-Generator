@@ -67,9 +67,30 @@ export default class ReceiptsService {
                   type: "string",
                   description: "The company name of the receipt",
                 },
+                address: {
+                  type: "string",
+                  description:
+                    "Business address printed on the receipt (street, city, or branch address). Return null if not visible.",
+                },
+                vat_reg_tin: {
+                  type: "string",
+                  description:
+                    "VAT Registered TIN of the seller (e.g. 'VAT Reg TIN: 123-456-789-000'). If not present, return null.",
+                },
                 vat_exempt_sales: {
                   type: "string",
-                  description: "The VAT Exempt sales of the receipt",
+                  description:
+                    "VAT-exempt sales amount, if any. Return null if not applicable.",
+                },
+                vatable_sales: {
+                  type: "string",
+                  description:
+                    "Amount net of VAT (VATable Sales / Amount less VAT). Return null if not shown.",
+                },
+                vat_amount: {
+                  type: "string",
+                  description:
+                    "VAT amount (usually 12%). Return null if not shown.",
                 },
                 date: {
                   type: "string",
@@ -85,8 +106,13 @@ export default class ReceiptsService {
                   type: "string",
                   description: "The Description of the receipt",
                 },
+                vat_compliance_notes: {
+                  type: "string",
+                  description:
+                    "Notes if VAT info is missing or unclear (e.g. 'No VAT Reg TIN found', 'No VAT breakdown shown').",
+                },
               },
-              required: ["company_name"],
+              required: ["company_name", "total_amount"],
             },
           },
         ],
@@ -114,9 +140,9 @@ export default class ReceiptsService {
   }
 
   async getReceipts(req) {
-    console.log(req);
-    const { page, pageSize } = req.query;
-    const res = await this.repo.read({ page, pageSize });
+    console.log(req.body);
+    const { page, pageSize, sort } = req.body;
+    const res = await this.repo.read({ page, pageSize, sort });
     return {
       error: false,
       data: res,

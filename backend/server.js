@@ -9,7 +9,11 @@ import cors from "@fastify/cors";
  * Routes
  */
 import Receipt from "./src/routes/receipts.route.js";
+import User from "./src/routes/user.route.js";
 
+import conn from "./db/conn.js";
+import Associations from "./src/models/association/index.js";
+import { auth } from "./authentication/auth.js";
 const fastify = Fastify({
   logger: {
     transport: {
@@ -27,34 +31,48 @@ const fastify = Fastify({
 });
 fastify.server.setTimeout(60 * 60 * 1000); // 10 minutes in milliseconds
 
-const start = () => {
+const start = async () => {
   try {
     /**
      * Register Modules
      */
     fastify.register(cors, {
       origin: (origin, cb) => {
-        if (!origin) {
-          return cb(null, true);
-        }
-
-        let hostname = "";
-        try {
-          hostname = new URL(origin).hostname;
-        } catch (err) {
-          console.error("Failed to parse Origin:", origin);
-          return cb(new Error("Invalid origin"));
-        }
-
-        const allowedHostnames = ["localhost", "34.126.144.53"];
-        if (allowedHostnames.includes(hostname)) {
-          return cb(null, true);
-        } else {
-          return cb(new Error("You are not allowed here"));
-        }
+        if (!origin) return cb(null, true); // allow non-browser requests
+        const allowed = ["localhost", "34.126.144.53"];
+        const hostname = new URL(origin).hostname;
+        if (allowed.includes(hostname)) cb(null, true);
+        else cb(new Error("Not allowed"));
       },
-      methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+      methods: ["GET", "POST", "PUT", "OPTIONS"],
+      exposedHeaders: ["Content-Disposition"],
+      credentials: true,
     });
+
+    // jwt
+    fastify.register(import("@fastify/jwt"), {
+      secret: process.env.JWT_SECRET,
+    });
+
+    fastify.register(import("@fastify/cookie"), {
+      secret: process.env.JWT_SECRET,
+      cookie: {
+        secure: true, // Insecure setting for development
+        httpOnly: true,
+        sameSite: "Lax",
+        path: "/",
+        maxAge: 180 * 24 * 60 * 60, // 180 days in seconds
+      },
+    });
+
+    fastify
+      .decorate("fastify1", fastify)
+      .decorateRequest("jwtVerfiy", {
+        getter() {
+          return fastify.jwt.verify;
+        },
+      })
+      .addHook("onRequest", auth);
 
     // multipart
     fastify.register(import("@fastify/multipart"), {
@@ -109,8 +127,19 @@ const start = () => {
       prefix: "/receipt",
     });
 
+    fastify.register(User, {
+      prefix: "/user",
+    });
+
+    const connected = await conn.auth();
+    if (connected) {
+      await conn.auth();
+      await Associations();
+      await conn.sync();
+    }
+
     fastify.listen({ port: process.env.PORT });
-  } catch (error) {
+  } catch (err) {
     fastify.log.error(err);
     process.exit(1);
   }

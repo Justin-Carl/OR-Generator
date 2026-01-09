@@ -3,11 +3,13 @@ import axios from "axios";
 import type {AxiosRequestConfig } from "axios";
 import { useState } from "react";
 import { useReceipt } from "@/context/ReceiptContext";
+import { useAlert } from "@/context/AlertContext";
+import {getDeviceInfo} from "@/lib/utils";
 
 interface UseApiReturn<T>{
     loading: boolean;
     error: string | null;
-    getReceipt: (url: string, config?: AxiosRequestConfig) => Promise<void>;
+    getReceipt: (url: string, body?: any,  config?: AxiosRequestConfig) => Promise<void>;
     uploadReceipt: (url: string, body?: any,  config?: AxiosRequestConfig) => Promise<void>;
     exportReceipts: (url: string, body?: any, config?: AxiosRequestConfig) => Promise<void>;
     editReceipt: (url: string, body?: any,  config?: AxiosRequestConfig) => Promise<void>;
@@ -16,20 +18,23 @@ interface UseApiReturn<T>{
 
 let apiClient: any;
 const base_url = import.meta.env.VITE_API_BASE_URL;
-console.log(base_url)
+const getDI = await getDeviceInfo();
 // Initialize apiClient synchronously
 apiClient = axios.create({
     baseURL: base_url,
     headers: {
-
+        platformVersion: getDI?.platformVersion || "none",
+        platform: getDI?.platform || "none",
     },
-
+    withCredentials: true
 });
 
 
 
 export const useApi = <T = any>(): UseApiReturn<T> => {
-    const {addReceipts, addExportData, updateAlert} = useReceipt();
+    const {addReceipts, addExportData} = useReceipt();
+    const {updateAlert} = useAlert();
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -52,7 +57,7 @@ export const useApi = <T = any>(): UseApiReturn<T> => {
         setError(null);
 
         try {
-            const response = await request()
+            const response = await request();
             addReceipts(response.data.data);
         } catch (err: any) {
             setError(err?.response?.data?.message || "Something went wrong");
@@ -67,7 +72,7 @@ export const useApi = <T = any>(): UseApiReturn<T> => {
 
         try {
             const response = await request()
-            updateAlert({message: "Export Success!", alive: true})
+            updateAlert({message: response.data.message || "Uploaded successfully!", alive: true})
             // addReceipts(response.data);
         } catch (err: any) {
             updateAlert({status: "error", message: err?.response?.data?.message || "Something went wrong", alive: true})
@@ -108,7 +113,7 @@ export const useApi = <T = any>(): UseApiReturn<T> => {
         }
     }
 
-    const getReceipt = (url: string, config?: AxiosRequestConfig) => handleGetRequest(() => apiClient.get(url, config))
+    const getReceipt = (url: string, body?: any,  config?: AxiosRequestConfig) => handleGetRequest(() => apiClient.post(url,body, config))
     const uploadReceipt = (url: string, body?: any,  config?: AxiosRequestConfig) => handleUploadReceipt(() => apiClient.post(url,body, config))
     
     const exportReceipts = (url: string, body?: any, config?: AxiosRequestConfig) => handleExportRequest(() => apiClient.post(url, body, config))

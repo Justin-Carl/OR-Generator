@@ -3,7 +3,8 @@
 //  Maps URLs to controllers.
 //=============================================================
 
-import ReceiptRepository from "../repositories/openai.repository.js";
+// import ReceiptRepository from "../repositories/openai.repository.js";
+import ReceiptRepository from "../repositories/receipt.repository.js";
 import OpenAI_API from "../external_api/openai.service.js";
 
 import ReceiptsService from "../services/receipts.service.js";

@@ -33,21 +33,16 @@ const UploadReceipt = ({ open, onChange }: UploadProps) => {
         const files = e.target.files
         if (!files) return
 
-        console.log(files)
         setFile(files)
     }
 
     const handleUpload = async () => {
-        console.log(file)
-
         if (!file || file.length === 0) return;
         setIsUploading(true)
         const fd = new FormData();
         fd.append("file", file[0]);
 
         const res = await api.uploadReceipt("receipt/upload", fd);
-
-        console.log(res)
         setIsUploading(false)
     }
 
