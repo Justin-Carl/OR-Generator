@@ -1,4 +1,5 @@
 [
   { "path": "/user/login", "method": "POST" },
-  { "path": "/user/check-session", "method": "GET" }
+  { "path": "/user/check-session", "method": "GET" },
+  { "path": "/user/create-user", "method": "POST" }
 ]
