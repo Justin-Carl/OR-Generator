@@ -76,7 +76,7 @@ const Export = () => {
                 <DialogHeader>
                     <DialogTitle>Export</DialogTitle>
                     <DialogDescription>
-                        Anyone who has this link will be able to view this.
+                        Records within the selected period will be downloaded as a CSV file for reporting or review
                     </DialogDescription>
                 </DialogHeader>
                 <div className="flex items-center gap-2">
