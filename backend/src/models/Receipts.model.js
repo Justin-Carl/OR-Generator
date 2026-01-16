@@ -19,7 +19,6 @@ Receipts.init(
     address: {
       type: DataTypes.TEXT("long"),
       allowNull: false,
-      defaultValue: "",
     },
     vat_reg_tin: {
       type: DataTypes.STRING,
