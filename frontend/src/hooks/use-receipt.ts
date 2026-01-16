@@ -73,8 +73,9 @@ export const useApi = <T = any>(): UseApiReturn<T> => {
         try {
             const response = await request()
             if(response.data.error){
-            updateAlert({message: response.data.message || "Something went wrong", alive: true})
-            } else {
+            updateAlert({status: "error",message: response.data.message || "Something went wrong", alive: true})
+            setError(err?.response?.data?.message || "Something went wrong");   
+        } else {
             updateAlert({message: response.data.message || "Uploaded successfully!", alive: true})
             }
             // addReceipts(response.data);
@@ -93,7 +94,8 @@ export const useApi = <T = any>(): UseApiReturn<T> => {
         try {
             const response = await request()
             if(response.data.error){
-                updateAlert({message: response.data.message || "Something went wrong", alive: true})
+                updateAlert({status: "error",message: response.data.message || "Something went wrong", alive: true})
+                setError(err?.response?.data?.message || "Something went wrong");
             } else {
                 addExportData(response.data)
                 updateAlert({message: "Export Success!", alive: true})
@@ -113,7 +115,8 @@ export const useApi = <T = any>(): UseApiReturn<T> => {
         try {
             const response = await request()
              if(response.data.error){
-                updateAlert({message: response.data.message || "Something went wrong", alive: true})
+                updateAlert({status: "error",message: response.data.message || "Something went wrong", alive: true})
+                setError(err?.response?.data?.message || "Something went wrong");
             } else {
                 updateAlert({message: response.data.message || "Updated successfully!", alive: true})
             }

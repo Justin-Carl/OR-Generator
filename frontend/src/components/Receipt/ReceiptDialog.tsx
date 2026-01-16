@@ -69,6 +69,9 @@ const ReceiptDialog = ({ open, data, type, onChange }: ReceiptEditProps) => {
 
     const handleEdit = async () => {
         const res = await api.editReceipt("receipt/edit", myData);
+        if (!api.error) {
+            onChange()
+        }
     }
 
     const [openCalendar, setOpenCalendar] = useState(false)
@@ -139,13 +142,13 @@ const ReceiptDialog = ({ open, data, type, onChange }: ReceiptEditProps) => {
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="grid flex-1 gap-2">
-                            <Label htmlFor="vat_exempt_sales">
+                            <Label htmlFor="expense_insights_category">
                                 Category
                             </Label>
                             <Input
-                                id="address"
+                                id="expense_insights_category"
                                 type="text"
-                                name="address"
+                                name="expense_insights_category"
                                 value={myData?.expense_insights_category}
                                 onChange={handleDataChange}
                                 readOnly={isView}

@@ -88,12 +88,12 @@ export const columns: ColumnDef<ReceiptType>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => onEdit?.(data)}>Edit</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => onView?.(data)}>View</DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                        {/* <DropdownMenuSeparator />
                         <DropdownMenuItem
                             onClick={() => onExport?.(data)}
                         >
                             Export
-                        </DropdownMenuItem>
+                        </DropdownMenuItem> */}
                     </DropdownMenuContent>
                 </DropdownMenu>
             )
