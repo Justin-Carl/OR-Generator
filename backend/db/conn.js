@@ -34,7 +34,7 @@ const auth = async () => {
 const sync = async () => {
   try {
     logger.info("Starting to Sync");
-    await sequelize.sync({ force: true, alter: true });
+    await sequelize.sync({ force: false, alter: true });
     logger.info("Sync was successful");
   } catch (err) {
     logger.error(err);
