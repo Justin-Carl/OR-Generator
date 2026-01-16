@@ -18,7 +18,8 @@ Receipts.init(
     },
     address: {
       type: DataTypes.TEXT("long"),
-      allowNull: false,
+      allowNull: true,
+      defaultValue: null,
     },
     vat_reg_tin: {
       type: DataTypes.STRING,
@@ -57,8 +58,8 @@ Receipts.init(
     },
     description: {
       type: DataTypes.TEXT("long"),
-      allowNull: false,
-      defaultValue: "",
+      allowNull: true,
+      defaultValue: null,
     },
     expense_insights_category: {
       type: DataTypes.STRING,
@@ -72,13 +73,13 @@ Receipts.init(
     },
     expense_insights_reasoning: {
       type: DataTypes.TEXT("long"),
-      allowNull: false,
-      defaultValue: "",
+      allowNull: true,
+      defaultValue: null,
     },
     vat_compliance_notes: {
       type: DataTypes.TEXT("long"),
-      allowNull: false,
-      defaultValue: "",
+      allowNull: true,
+      defaultValue: null,
     },
     arguments: {
       type: DataTypes.TEXT("long"),
