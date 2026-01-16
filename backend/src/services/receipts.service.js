@@ -4,6 +4,9 @@
 //=============================================================
 import fs from "fs";
 import path from "path";
+import crypto from "crypto";
+import { imageHash } from "image-hash";
+
 import { Parser } from "json2csv";
 import Details from "../models/Details.model.js";
 import Categories from "../models/Categories.model.js";
@@ -20,12 +23,34 @@ export default class ReceiptsService {
 
   async uploadReceipt(req) {
     const data = await req.body.file; // get uploaded file
-    console.log("====", data);
+    const buffer = await data.toBuffer(); // get raw bytes
+
+    //3 Layers for image duplicate detection
+    //================ Layer 1 duplicate detection ==============
+    const iHash = await this.CryptographicHash(buffer); //Layer 1
+    if (!iHash) {
+      console.log("=====> Duplicate image detected at Layer 1.");
+      return {
+        error: true,
+        message: "Duplicate Image",
+      };
+    }
+    //============================================================
+
     const filePath = path.join(process.cwd(), "assets/images", data.filename);
     // save file
-    await data
-      .toBuffer()
-      .then((buffer) => fs.promises.writeFile(filePath, buffer));
+    await fs.promises.writeFile(filePath, buffer);
+    // await data
+    //   .toBuffer()
+    //   .then((buffer) => fs.promises.writeFile(filePath, buffer));
+
+    //================ Layer 2 duplicate detection ==============
+    const pHash = await this.PerpetualHashing(filePath, req);
+    if (!pHash) {
+      console.log("=====> Duplicate image detected at Layer 2.");
+      return { error: true, message: "Visually duplicate image detected" };
+    }
+    //============================================================
 
     console.log(
       "Upload success!! ",
@@ -204,7 +229,25 @@ export default class ReceiptsService {
 
     if (openai_response.output[0].arguments) {
       const args = JSON.parse(openai_response.output[0].arguments);
-      // const expense_insights = JSO
+
+      //================ Layer 3 duplicate detection ==============
+      const content_finger_print =
+        args.company_name + "-" + args.date + "-" + args.total_amount;
+
+      const existing_content = await this.ContentFingerPrint(
+        content_finger_print,
+        req
+      );
+
+      if (existing_content) {
+        console.log("=====> Duplicate image detected at Layer 3.");
+        return {
+          error: true,
+          message: "Duplicate image detected",
+        };
+      }
+      //============================================================
+
       const d = {
         arguments: JSON.stringify({
           ...args,
@@ -216,6 +259,9 @@ export default class ReceiptsService {
         expense_insights_confidence: args.expense_insights.confidence,
         expense_insights_reasoning: args.expense_insights.reasoning,
         user_id: req.user_id,
+        imageHash: iHash,
+        pHash: pHash,
+        content_finger_print: content_finger_print,
       };
 
       await this.repo.create(d);
@@ -274,5 +320,95 @@ export default class ReceiptsService {
       error: false,
       message: "Data Updated!",
     };
+  }
+
+  async CryptographicHash(buffer) {
+    const sha256Hash = crypto.createHash("sha256").update(buffer).digest("hex");
+    // 2. Check DB for existing hash
+    const existing = await this.repo.readOne({
+      filter: [{ type: "string", field: "imageHash", filter: sha256Hash }],
+    });
+
+    if (!existing) {
+      return sha256Hash;
+    }
+    return null;
+  }
+
+  async PerpetualHashing(filePath, req) {
+    // Compute perceptual hash
+    const pHash = await this.ComputePHash(filePath);
+    console.log("Perceptual hash:", pHash);
+    // Find candidates with same prefix
+    const candidates = await this.repo.readAll({
+      attributes: ["pHash"],
+      filter: [
+        {
+          type: "string_like",
+          field: "pHash",
+          filter: pHash.slice(0, 7) + "%",
+        },
+        {
+          type: "number",
+          field: "user_id",
+          filter: req.user_id,
+        },
+      ],
+      raw: true,
+    }); // get the data that has the first 7 characters.
+    console.log("Candidates for prefix:", candidates);
+
+    if (candidates.length > 0) {
+      for (const img of candidates) {
+        // A small distance → images are visually very similar (have more similarities in phash)
+        // A large distance → images are different
+        if (this.HammingDistance(pHash, img.pHash) <= 5) {
+          return null;
+        }
+      }
+    }
+
+    return pHash;
+  }
+  // Helper to compute perceptual hash (Promise-based)
+  async ComputePHash(filePath) {
+    return new Promise((resolve, reject) => {
+      imageHash(filePath, 16, true, (err, hash) => {
+        if (err) reject(err);
+        else resolve(hash);
+      });
+    });
+  }
+
+  HammingDistance(hash1, hash2) {
+    let dist = 0;
+    for (let i = 0; i < hash1.length; i++) {
+      if (hash1[i] !== hash2[i]) dist++;
+    }
+    return dist;
+  }
+
+  async ContentFingerPrint(content, req) {
+    const contents = await this.repo.readAll({
+      attributes: ["content_finger_print"],
+      filter: [
+        {
+          type: "string",
+          field: "content_finger_print",
+          filter: content,
+        },
+        {
+          type: "number",
+          field: "user_id",
+          filter: req.user_id,
+        },
+      ],
+      raw: true,
+    });
+
+    if (contents.length > 0) {
+      return true;
+    }
+    return false;
   }
 }

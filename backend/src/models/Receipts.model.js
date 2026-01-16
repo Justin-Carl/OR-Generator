@@ -95,6 +95,21 @@ Receipts.init(
         },
       },
     },
+    imageHash: {
+      type: DataTypes.TEXT("long"),
+      allowNull: true,
+      defaultValue: null,
+    },
+    pHash: {
+      type: DataTypes.TEXT("long"),
+      allowNull: true,
+      defaultValue: null,
+    },
+    content_finger_print: {
+      type: DataTypes.TEXT("long"),
+      allowNull: true,
+      defaultValue: null,
+    },
   },
   {
     timestamps: true,

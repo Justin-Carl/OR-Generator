@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { AlertCircleIcon, CheckCircle2Icon, PopcornIcon } from "lucide-react"
+import { AlertCircleIcon, CheckCircle2Icon, PopcornIcon, CircleXIcon } from "lucide-react"
 import { useAlert } from "@/context/AlertContext";
 
 import {
@@ -25,7 +25,7 @@ export function AlertComp() {
             {alertData?.alive ? (
                 <div className="grid max-w-xl items-start gap-4 absolute top-2 right-2 z-1000">
                     <Alert className={alertData?.status === "error" ? "bg-red-500" : "bg-green-400"}>
-                        <CheckCircle2Icon />
+                        {alertData?.status === "error" ? <CircleXIcon /> : <CheckCircle2Icon />}
                         <AlertTitle>
                             {alertData.message}
                         </AlertTitle>

@@ -44,11 +44,14 @@ const UploadReceipt = ({ open, onChange }: UploadProps) => {
 
         const res = await api.uploadReceipt("receipt/upload", fd);
         setIsUploading(false)
-        if (!api.error) {
+        console.log(res)
+
+    }
+    useEffect(() => {
+        if (!api.error && !api.loading) {
             onChange()
         }
-    }
-
+    }, [api.error, api.loading])
     useEffect(() => { setOpen(open) }, [open])
     return (
         <Dialog open={isOpen} onOpenChange={handleChange} >

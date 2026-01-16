@@ -62,7 +62,7 @@ const CategoryDialog = ({ open, data, type, onChange }: CategoryDialogProps) => 
         onChange()
     }
 
-    useEffect(() => { setOpen(open) }, [open])
+    useEffect(() => { setOpen(open); setData(categoryData) }, [open])
     return (
         <Dialog open={isOpen} onOpenChange={handleChange} >
             <DialogContent>

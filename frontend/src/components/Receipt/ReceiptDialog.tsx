@@ -69,9 +69,6 @@ const ReceiptDialog = ({ open, data, type, onChange }: ReceiptEditProps) => {
 
     const handleEdit = async () => {
         const res = await api.editReceipt("receipt/edit", myData);
-        if (!api.error) {
-            onChange()
-        }
     }
 
     const [openCalendar, setOpenCalendar] = useState(false)
@@ -91,6 +88,11 @@ const ReceiptDialog = ({ open, data, type, onChange }: ReceiptEditProps) => {
         window.open(imageUrl, "_blank");
     }
 
+    useEffect(() => {
+        if (!api.error && !api.loading) {
+            onChange()
+        }
+    }, [api.error, api.loading])
     useEffect(() => { setOpen(open) }, [open])
     useEffect(() => {
         if (data) {

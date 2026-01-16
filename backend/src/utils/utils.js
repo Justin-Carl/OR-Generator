@@ -36,6 +36,11 @@ export const WhereFilters = (filters = []) => {
             [Op.substring]: f.filter.toString(),
           };
           break;
+        case "string_like":
+          wherefilters[f.field] = {
+            [Op.like]: f.filter.toString(),
+          };
+          break;
         case "not_empty_string":
           wherefilters[f.field] = { [Op.ne]: "" };
           break;

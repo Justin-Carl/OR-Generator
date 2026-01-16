@@ -58,8 +58,14 @@ export const useApi = <T = any>(): UseApiReturn<T> => {
 
         try {
             const response = await request()
-           addToken(response.data.token);
-            updateAlert({message: "Login Success!", alive: true})
+            if(response.data.error){
+                updateAlert({status: "error",message: response.data.message || "Something went wrong", alive: true})
+                setError(response?.data?.message || "Something went wrong");   
+            } else {
+                addToken(response.data.token);
+                updateAlert({message: "Login Success!", alive: true})
+            }
+          
         } catch (err: any) {
             console.log(err?.response?.data?.message || "Something went wrong")
             updateAlert({status: "error", message: err?.response?.data?.message || "Something went wrong", alive: true})

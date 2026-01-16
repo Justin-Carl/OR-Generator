@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 import { useApi } from "@/hooks/use-user"
 import { useUser } from "@/context/UserContext"
 import { useNavigate } from "react-router-dom";
+import { AlertComp } from "@/components/alert/Alert"
 
 export default function Login() {
     const api = useApi();
@@ -38,6 +39,7 @@ export default function Login() {
     }
     return (
         <div className="flex flex-col items-center gap-5 py-10">
+            <AlertComp />
             <div className="flex flex-col items-center gap-5 w-full max-w-sm">
                 <ReceiptText size={"50"} />
                 <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
