@@ -3,6 +3,7 @@
 //  Handles DB queries (no business logic).
 //=============================================================
 import Details from "../models/Details.model.js";
+import { WhereFilters } from "../utils/utils.js";
 
 export default class ReceiptRepository {
   constructor() {}
@@ -27,16 +28,22 @@ export default class ReceiptRepository {
     return id;
   }
 
-  async read({ page = 0, pageSize = 10, sort = [["id", "ASC"]], filter = [] }) {
+  async read({
+    page = 0,
+    pageSize = 10,
+    sort = [["id", "ASC"]],
+    filters = [],
+  }) {
     let query = {
       limit: parseInt(pageSize),
       offset: parseInt(page),
       order: sort,
     };
 
-    if (filter.length !== 0) query["where"] = WhereFilters(filter);
+    if (filters.length !== 0) query["where"] = WhereFilters(filters);
 
     // ✅ Fetch both filtered list and total count
+    console.log("------", query);
     let { count, rows } = await Details.findAndCountAll(query);
 
     return {

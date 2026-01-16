@@ -16,9 +16,14 @@ Details.init(
       allowNull: false,
       validate: {
         notNull: {
-          msg: "Please enter Raffle Name",
+          msg: "Please enter Image Name",
         },
       },
+    },
+    user_id: {
+      allowNull: true,
+      type: DataTypes.INTEGER,
+      defaultValue: null,
     },
   },
   {

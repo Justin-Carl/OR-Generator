@@ -19,7 +19,7 @@ export const cookieChecker = async (req, repo) => {
 
     if (!getCookeDetails) throw new Error("jwtVerfiy is invalid");
 
-    let userDetails = await repo.readV2([
+    let userDetails = await repo.readOne([
       { filter: getCookeDetails.id, type: "number", field: "id" },
     ]);
 

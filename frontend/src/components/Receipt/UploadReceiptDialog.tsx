@@ -44,6 +44,7 @@ const UploadReceipt = ({ open, onChange }: UploadProps) => {
 
         const res = await api.uploadReceipt("receipt/upload", fd);
         setIsUploading(false)
+        onChange()
     }
 
     useEffect(() => { setOpen(open) }, [open])

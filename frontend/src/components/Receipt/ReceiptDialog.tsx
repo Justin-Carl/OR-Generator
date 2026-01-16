@@ -51,7 +51,7 @@ const ReceiptDialog = ({ open, data, type, onChange }: ReceiptEditProps) => {
         }
 
         if (target.id === "total_amount" || target.id === "vatable_sales" || target.id === "vat_amount" || target.id === "vat_exempt_sales") {
-            const format_number = target.value.replace(/[^0-9.]/g, "");
+            let format_number = target.value.replace(/[^0-9.]/g, "");
             // Optional: prevent multiple dots
             const parts = target.value.split(".");
             if (parts.length > 2) {
@@ -92,6 +92,7 @@ const ReceiptDialog = ({ open, data, type, onChange }: ReceiptEditProps) => {
     useEffect(() => {
         if (data) {
             data.total_amount = formatMoney(data.total_amount)
+            console.log(data)
             setMyData(data)
         }
     }, [data])
@@ -131,6 +132,21 @@ const ReceiptDialog = ({ open, data, type, onChange }: ReceiptEditProps) => {
                                 type="text"
                                 name="address"
                                 value={myData?.address}
+                                onChange={handleDataChange}
+                                readOnly={isView}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="grid flex-1 gap-2">
+                            <Label htmlFor="vat_exempt_sales">
+                                Category
+                            </Label>
+                            <Input
+                                id="address"
+                                type="text"
+                                name="address"
+                                value={myData?.expense_insights_category}
                                 onChange={handleDataChange}
                                 readOnly={isView}
                             />

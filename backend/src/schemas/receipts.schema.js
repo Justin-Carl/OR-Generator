@@ -4,16 +4,23 @@
 //=============================================================
 
 // import ReceiptRepository from "../repositories/openai.repository.js";
-import ReceiptRepository from "../repositories/receipt.repository.js";
+// import ReceiptRepository from "../repositories/receipt.repository.js";
+// import ReceiptRepository from "../repositories/receiptV2.repository.js";
+
+import ReceiptRepository from "../repositories/receiptV2.repository.js";
+
+import Categories from "../models/Categories.model.js";
+import User from "../models/Categories.model.js";
+
 import OpenAI_API from "../external_api/openai.service.js";
 
 import ReceiptsService from "../services/receipts.service.js";
 import ReceiptsController from "../controllers/receipts.controller.js";
 
-const repo = new ReceiptRepository();
+// const repo = new ReceiptRepository();
 const openai = new OpenAI_API(); // external api
 
-const service = new ReceiptsService(repo, openai);
+const service = new ReceiptsService(ReceiptRepository, openai);
 const controller = new ReceiptsController(service);
 
 export const UploadReceiptsSchema = {

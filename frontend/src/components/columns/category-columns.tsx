@@ -18,61 +18,32 @@ import { Button } from "@/components/ui/button"
 // You can use a Zod schema here if you want.
 import { formatMoney } from "@/lib/utils"
 
-export type ReceiptType = {
+export type CategoriesType = {
     id: number,
-    company_name: string,
-    status: "AI" | "Updated",
-    total_amount: string,
-    receipt_date: string
+    description: string,
+    title: string,
 }
 
 export const columns: ColumnDef<ReceiptType>[] = [
     {
-        accessorKey: "company_name",
-        header: "Company Name",
+        accessorKey: "title",
+        header: "Title",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Company Name
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    Title
+                    {/* <ArrowUpDown className="ml-2 h-4 w-4" /> */}
                 </Button>
             )
         },
     },
     {
-        accessorKey: "expense_insights.category",
-        header: "Category",
-        //  cell: ({ row }: any) => {
-        //     const data = row.original;
-
-        //     return moment(data.date).format('MMMM DD, YYYY');
-        // }
+        accessorKey: "description",
+        header: "Description",
     },
-    {
-        accessorKey: "date",
-        header: "Date",
-        cell: ({ row }: any) => {
-            const data = row.original;
-
-            return moment(data.date).format('MMMM DD, YYYY');
-        }
-    },
-    {
-        accessorKey: "total_amount",
-        header: "Total Amount",
-        cell: ({ row }) => {
-            const data = row.original
-
-            return formatMoney(data.total_amount);
-        }
-    },
-    // {
-    //     accessorKey: "status",
-    //     header: "Status",
-    // },
     {
         header: "Actions",
         cell: ({ row, onExport, onEdit, onView }: any) => {
@@ -86,14 +57,24 @@ export const columns: ColumnDef<ReceiptType>[] = [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => onEdit?.(data)}>Edit</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onView?.(data)}>View</DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                            onClick={() => onExport?.(data)}
-                        >
-                            Export
-                        </DropdownMenuItem>
+
+                        {onEdit ? (
+                            <DropdownMenuItem onClick={() => onEdit?.(data)}>Edit</DropdownMenuItem>
+                        ) : null}
+                        {onView ? (
+                            <DropdownMenuItem onClick={() => onView?.(data)}>View</DropdownMenuItem>
+                        ) : null}
+                        {onExport ? (
+                            <>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    onClick={() => onExport?.(data)}
+                                >
+                                    Export
+                                </DropdownMenuItem>
+                            </>
+                        ) : null}
+
                     </DropdownMenuContent>
                 </DropdownMenu>
             )

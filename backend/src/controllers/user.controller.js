@@ -19,10 +19,14 @@ export default class UsersController {
 
     reply
       .setCookie("cookie_or_reader_07012026", encryptToken, {
-        // domain: "",
+        domain: "",
+        secure: true,
+        sameSite: "none",
+
+        // secure: false,
+        // sameSite: "Lax",
+
         path: "/",
-        secure: false,
-        sameSite: "Lax",
         httpOnly: true,
         maxAge: 180 * 24 * 60 * 60, // 180 days in seconds
       })
@@ -36,11 +40,14 @@ export default class UsersController {
   Logout = async (req, reply) => {
     reply
       .clearCookie("cookie_or_reader_07012026", {
-        // domain: "",
+        domain: "",
+        secure: true,
+        sameSite: "none",
+
+        // secure: false,
+        // sameSite: "Lax",
+
         path: "/",
-        secure: false,
-        httpOnly: true,
-        sameSite: "Lax",
       })
       .send({ result: "success", message: "Logged out!" });
   };

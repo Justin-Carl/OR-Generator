@@ -40,7 +40,7 @@ export default class UserRepository {
     };
   }
 
-  async readV2({ filter = [] }) {
+  async readAll({ filter = [] }) {
     let query = {};
 
     if (filter.length !== 0) query["where"] = WhereFilters(filter);

@@ -1,7 +1,8 @@
 import cookieChecker from "./cookieChecker.js";
 import { getPath } from "../src/utils/utils.js";
 import fs from "fs";
-import UserRepository from "../src/repositories/user.repository.js";
+import ReceiptRepository from "../src/repositories/receiptV2.repository.js";
+import Users from "../src/models/Users.model.js";
 
 export const auth = async (req, res) => {
   try {
@@ -16,7 +17,7 @@ export const auth = async (req, res) => {
     });
 
     if (findNoP === undefined) {
-      const repo = new UserRepository();
+      const repo = new ReceiptRepository(Users);
 
       // check adminPaths
       let c_checkerDetails = await cookieChecker(req, repo);

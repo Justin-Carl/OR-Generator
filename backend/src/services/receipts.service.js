@@ -5,10 +5,15 @@
 import fs from "fs";
 import path from "path";
 import { Parser } from "json2csv";
+import Details from "../models/Details.model.js";
+import Categories from "../models/Categories.model.js";
+import Receipts from "../models/Receipts.model.js";
 
 export default class ReceiptsService {
-  constructor(repo, external_service) {
-    this.repo = repo;
+  constructor(RepoClass, external_service) {
+    this.repo = new RepoClass(Receipts);
+    this.repo2 = new RepoClass(Categories);
+
     this.es = external_service;
   }
 
@@ -31,6 +36,17 @@ export default class ReceiptsService {
       { encoding: "base64" }
     );
 
+    const category_list = await this.repo2.readAll({
+      filter: [{ type: "number", field: "user_id", filter: req.user_id }],
+    });
+
+    let categories_string = "";
+
+    if (category_list.length > 0) {
+      let m = category_list.map((x) => `- ${x.title} ${x.description} \n`);
+      categories_string = m.join("", ",");
+    }
+
     const config = {
       data: {
         model: "gpt-4.1",
@@ -40,7 +56,36 @@ export default class ReceiptsService {
             content: [
               {
                 type: "input_text",
-                text: "You are a helpful assistant that extracts key details from receipts.",
+                // text: "You are a helpful assistant that extracts key details from receipts.",
+                text: `You are a helpful assistant that extracts key details from receipts and generates expense insights.
+
+    Your tasks:
+    1. Extract all standard receipt details:
+       - company_name
+       - address
+       - VAT/TIN information
+       - vatable_sales, vat_exempt_sales, vat_amount
+       - date (MM/DD/YYYY)
+       - total_amount
+       - description / particulars
+       - VAT compliance notes if missing or unclear
+
+    2. Categorize each expense based on the following user-defined categories:
+    ${categories_string}
+
+    3. For categorization:
+       - Pick the most appropriate category based on receipt details.
+       - If no match, classify as "Others".
+       - Provide a confidence score (0.0–1.0) and a short reasoning explaining why this category was chosen.
+
+    Output:
+    - JSON object including all extracted fields.
+    - Include a new field 'expense_insights' with:
+      {
+        category: string,
+        confidence: number,
+        reasoning: string
+      }`,
               },
             ],
           },
@@ -59,7 +104,8 @@ export default class ReceiptsService {
           {
             type: "function",
             name: "extract_receipt_data",
-            description: "Extract details from a receipt image",
+            description:
+              "Extract details from a receipt image and generate expense insights including category classification.",
             parameters: {
               type: "object",
               properties: {
@@ -77,6 +123,11 @@ export default class ReceiptsService {
                   description:
                     "VAT Registered TIN of the seller (e.g. 'VAT Reg TIN: 123-456-789-000'). If not present, return null.",
                 },
+                or_number: {
+                  type: "string",
+                  description:
+                    "Official Receipt Number (OR No.). May appear as 'OR No', 'O.R. No', or 'Receipt No'. Return null if not visible.",
+                },
                 vat_exempt_sales: {
                   type: "string",
                   description:
@@ -85,7 +136,7 @@ export default class ReceiptsService {
                 vatable_sales: {
                   type: "string",
                   description:
-                    "Amount net of VAT (VATable Sales / Amount less VAT). Return null if not shown.",
+                    "Amount net of VAT (Vatable / VATable Sales / Amount less VAT). Return null if not shown.",
                 },
                 vat_amount: {
                   type: "string",
@@ -106,13 +157,36 @@ export default class ReceiptsService {
                   type: "string",
                   description: "The Description of the receipt",
                 },
+
+                expense_insights: {
+                  type: "object",
+                  description: "AI-generated insights about the expense",
+                  properties: {
+                    category: {
+                      type: "string",
+                      description:
+                        "Best-matched expense category based on user-defined categories. Use 'Others' if no match.",
+                    },
+                    confidence: {
+                      type: "number",
+                      description: "Confidence score from 0.0 to 1.0",
+                    },
+                    reasoning: {
+                      type: "string",
+                      description:
+                        "Short explanation why this category was chosen",
+                    },
+                  },
+                  required: ["category"],
+                },
+
                 vat_compliance_notes: {
                   type: "string",
                   description:
                     "Notes if VAT info is missing or unclear (e.g. 'No VAT Reg TIN found', 'No VAT breakdown shown').",
                 },
               },
-              required: ["company_name", "total_amount"],
+              required: ["company_name", "total_amount", "expense_insights"],
             },
           },
         ],
@@ -122,16 +196,24 @@ export default class ReceiptsService {
     // const openai_response = await this.repo.response_image_input(config);
     const openai_response = await this.es.response_image_input(config);
 
-    const d = {
-      arguments: JSON.stringify({
-        ...JSON.parse(openai_response.output[0].arguments),
-        status: "AI",
-      }),
-      imageName: data.filename,
-      createdAt: new Date(),
-    };
+    if (openai_response.output[0].arguments) {
+      const args = JSON.parse(openai_response.output[0].arguments);
+      // const expense_insights = JSO
+      const d = {
+        arguments: JSON.stringify({
+          ...args,
+          status: "AI",
+        }),
+        imageName: data.filename,
+        ...args,
+        expense_insights_category: args.expense_insights.category,
+        expense_insights_confidence: args.expense_insights.confidence,
+        expense_insights_reasoning: args.expense_insights.reasoning,
+        user_id: req.user_id,
+      };
 
-    await this.repo.create(d);
+      await this.repo.create(d);
+    }
 
     return {
       error: false,
@@ -141,8 +223,8 @@ export default class ReceiptsService {
 
   async getReceipts(req) {
     console.log(req.body);
-    const { page, pageSize, sort } = req.body;
-    const res = await this.repo.read({ page, pageSize, sort });
+    const { page, pageSize, sort, filters } = req.body;
+    const res = await this.repo.read({ page, pageSize, sort, filter: filters });
     return {
       error: false,
       data: res,
@@ -170,13 +252,16 @@ export default class ReceiptsService {
   async editReceipt(req) {
     const data = req.body;
     const id = data.id;
+    const expense_insights = data.expense_insights;
 
     delete data.id;
+    delete data.expense_insights;
 
     data.status = "Updated";
 
     const new_data = {
-      arguments: JSON.stringify(data),
+      ...data,
+      // arguments: JSON.stringify(data),
     };
     const res = await this.repo.update(id, new_data);
     return {

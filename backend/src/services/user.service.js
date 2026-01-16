@@ -6,10 +6,12 @@ import fs from "fs";
 import path from "path";
 import { encrpytPassword, decryptPassword } from "../utils/utils.js";
 import cookieChecker from "../../authentication/cookieChecker.js";
+import Users from "../models/Users.model.js";
 
 export default class UserService {
-  constructor(repo) {
-    this.repo = repo;
+  constructor(RepoClass) {
+    // this.repo = repo;
+    this.repo = new RepoClass(Users);
   }
 
   async createUser(req) {
@@ -42,7 +44,7 @@ export default class UserService {
       let a;
       console.log("=======");
       if (req.body.email)
-        a = await this.repo.readV2({
+        a = await this.repo.readAll({
           filter: [{ type: "string", field: "email", filter: req.body.email }],
         });
 

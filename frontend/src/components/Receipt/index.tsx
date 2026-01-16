@@ -22,10 +22,14 @@ import ReceiptDialog from "./ReceiptDialog"
 import { useApi } from "@/hooks/use-receipt"
 import { useReceipt } from "@/context/ReceiptContext"
 import { useUser } from "@/context/UserContext"
+import { useExport } from "@/context/ExportContext"
+
+import { Input } from "@/components/ui/input"
 
 const Receipt = () => {
     const api = useApi();
     const { token } = useUser();
+    const { updateOpenExport, updateExportType } = useExport();
 
     const { receipts, exportData } = useReceipt();
     const [data, setData] = useState<ReceiptType[]>([])
@@ -33,6 +37,7 @@ const Receipt = () => {
     const [isDialogOpen, setDialogOpen] = useState(false);
     const [dialogType, setDialogType] = useState("view");
     const [dialogData, setDialogData] = useState(receiptArgumentsData);
+    const [search, setSearch] = useState<string>("")
 
     const handleChange = () => {
         getReceipts();
@@ -47,7 +52,14 @@ const Receipt = () => {
     }
 
     const getReceipts = async () => {
-        await api.getReceipt("receipt/", { sort: [["id", "DESC"]] });
+        const body = {
+            sort: [["id", "DESC"]]
+        }
+
+        if (search.trim() != "") {
+            body.filters = [{ type: "string", field: "arguments", filter: search }]
+        }
+        await api.getReceipt("receipt/", body);
     }
 
     useEffect(() => {
@@ -78,21 +90,24 @@ const Receipt = () => {
     }
 
     const handleData = () => {
-        let new_data: ReceiptType[] = []
-        receipts.list.forEach(x => {
-            if (typeof x.arguments !== "object") {
-                x.arguments = JSON.parse(x.arguments);
-                const z = x.arguments
-                new_data.push({
-                    id: x.id,
-                    imageName: x.imageName,
-                    ...z
-                })
-            }
+        // let new_data: ReceiptType[] = []
+        // receipts.list.forEach(x => {
+        //     if (typeof x.arguments !== "object") {
+        //         x.arguments = JSON.parse(x.arguments);
+        //         const z = x.arguments
+        //         new_data.push({
+        //             id: x.id,
+        //             imageName: x.imageName,
+        //             ...z
+        //         })
+        //     }
 
-        });
+        // });
 
-        setData(new_data)
+        // setData(new_data)
+        console.log(receipts.list)
+        setData(receipts.list)
+
     }
 
     useEffect(() => {
@@ -113,14 +128,55 @@ const Receipt = () => {
         }
     }, [exportData]);
 
+
+    const handleSearchInput = (e: any) => {
+        const target = e.target
+
+        setSearch(target.value)
+    }
+
+    const handleSearch = (e: any) => {
+        const key = e.key
+
+        if (key === "Enter") {
+            getReceipts();
+        }
+    }
+
+    const handleExportByDate = (e: any) => {
+        updateOpenExport(true)
+        updateExportType('receipts')
+    }
     return (
-        <div className="container mx-auto py-10">
+        <div className="container mx-auto pb-10">
             <div className="flex flex-col gap-5">
-                <ButtonGroup>
-                    {/* <Button variant="outline" size="lg" >Export</Button>
+                <div className="flex flex-row justify-end gap-5">
+                    <div className="flex flex-row gap-5">
+                        {/* <div className="filter">
+                            <Button variant="outline" size="lg" >Filter by: </Button>
+                        </div> */}
+                        <div className="">
+                            <Input
+                                id="search"
+                                type="text"
+                                name="search"
+                                value={search}
+                                placeholder="Search"
+                                onChange={handleSearchInput}
+                                style={{ height: "100%" }}
+                                onKeyDown={handleSearch}
+
+                            />
+                        </div>
+                    </div>
+                    <ButtonGroup>
+                        {/* <Button variant="outline" size="lg" >Export</Button>
                     <ButtonGroupSeparator /> */}
-                    <Button onClick={handelDialog} variant="outline" size="lg" >Upload Receipt</Button>
-                </ButtonGroup>
+                        <Button onClick={handleExportByDate} variant="outline" size="lg" >Export Receipt</Button>
+                        <Button onClick={handelDialog} variant="outline" size="lg" >Upload Receipt</Button>
+                    </ButtonGroup>
+                </div>
+
                 <DataTable columns={columns} data={data} onView={handleView} onEdit={handleEdit} onExport={handleExport} />
             </div>
             <UploadReceipt open={isOpen} onChange={handleChange} />

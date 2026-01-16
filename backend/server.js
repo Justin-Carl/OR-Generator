@@ -10,6 +10,8 @@ import cors from "@fastify/cors";
  */
 import Receipt from "./src/routes/receipts.route.js";
 import User from "./src/routes/user.route.js";
+import Category from "./src/routes/categories.route.js";
+import Export from "./src/routes/export.route.js";
 
 import conn from "./db/conn.js";
 import Associations from "./src/models/association/index.js";
@@ -129,6 +131,14 @@ const start = async () => {
 
     fastify.register(User, {
       prefix: "/user",
+    });
+
+    fastify.register(Category, {
+      prefix: "/category",
+    });
+
+    fastify.register(Export, {
+      prefix: "/export",
     });
 
     const connected = await conn.auth();

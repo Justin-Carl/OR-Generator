@@ -20,7 +20,7 @@ export default function Login() {
     }
     useEffect(() => {
         if (token) {
-            navigate("/home", { replace: true });
+            navigate("/receipts", { replace: true });
         }
     }, [token, navigate])
 

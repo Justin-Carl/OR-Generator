@@ -2,6 +2,7 @@ import * as React from 'react';
 import { SiteHeader } from './Header'
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { AlertComp } from "../alert/Alert"
+import { AppSidebar } from "./Sidebar"
 
 interface Props {
     children: React.ReactNode;
@@ -23,6 +24,7 @@ export default function MainLayout({
                 } as React.CSSProperties
             }
         >
+            <AppSidebar />
             <SidebarInset>
                 <AlertComp />
                 <SiteHeader title={title} />
