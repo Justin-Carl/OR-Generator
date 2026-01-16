@@ -44,7 +44,7 @@ export default class UserService {
       let a;
       console.log("=======");
       if (req.body.email)
-        a = await this.repo.readAll({
+        a = await this.repo.readOne({
           filter: [{ type: "string", field: "email", filter: req.body.email }],
         });
 

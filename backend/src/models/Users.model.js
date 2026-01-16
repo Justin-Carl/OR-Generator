@@ -71,10 +71,8 @@ Users.init(
           user.password = prevPassword; // Restore the old password
           return;
         }
-        console.log("1111111111111111");
 
         const decrypted = decryptPassword(prevPassword);
-        console.log("222222222");
         if (decrypted !== currentPassword) {
           user.password = encrpytPassword(currentPassword);
         } else {
