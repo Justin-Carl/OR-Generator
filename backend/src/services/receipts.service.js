@@ -232,8 +232,11 @@ export default class ReceiptsService {
       const args = JSON.parse(openai_response.output[0].arguments);
 
       //================ Layer 3 duplicate detection ==============
+      const normalizedCompanyName = args.company_name
+        .toLowerCase()
+        .replace(/[^a-z]/g, ""); // letters only
       const content_finger_print =
-        args.company_name + "-" + args.date + "-" + args.total_amount;
+        normalizedCompanyName + "-" + args.date + "-" + args.total_amount;
 
       const existing_content = await this.ContentFingerPrint(
         content_finger_print,
