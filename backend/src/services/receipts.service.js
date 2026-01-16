@@ -183,6 +183,7 @@ export default class ReceiptsService {
                 total_amount: {
                   type: "string",
                   description: "The Total Amount of the receipt",
+                  pattern: "^[0-9]+\\.[0-9]{2}$",
                 },
                 description: {
                   type: "string",
