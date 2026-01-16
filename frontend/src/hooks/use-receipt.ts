@@ -72,7 +72,11 @@ export const useApi = <T = any>(): UseApiReturn<T> => {
 
         try {
             const response = await request()
+            if(response.data.error){
+            updateAlert({message: response.data.message || "Something went wrong", alive: true})
+            } else {
             updateAlert({message: response.data.message || "Uploaded successfully!", alive: true})
+            }
             // addReceipts(response.data);
         } catch (err: any) {
             updateAlert({status: "error", message: err?.response?.data?.message || "Something went wrong", alive: true})
@@ -88,8 +92,12 @@ export const useApi = <T = any>(): UseApiReturn<T> => {
 
         try {
             const response = await request()
-            addExportData(response.data)
-            updateAlert({message: "Export Success!", alive: true})
+            if(response.data.error){
+                updateAlert({message: response.data.message || "Something went wrong", alive: true})
+            } else {
+                addExportData(response.data)
+                updateAlert({message: "Export Success!", alive: true})
+            }
         } catch (err: any) {
             updateAlert({status: "error", message: err?.response?.data?.message || "Something went wrong", alive: true})
             setError(err?.response?.data?.message || "Something went wrong");
@@ -104,7 +112,11 @@ export const useApi = <T = any>(): UseApiReturn<T> => {
 
         try {
             const response = await request()
-            updateAlert({...response.data, alive: true})
+             if(response.data.error){
+                updateAlert({message: response.data.message || "Something went wrong", alive: true})
+            } else {
+                updateAlert({message: response.data.message || "Updated successfully!", alive: true})
+            }
         } catch (err: any) {
             updateAlert({status: "error", message: err?.response?.data?.message || "Something went wrong", alive: true})
             setError(err?.response?.data?.message || "Something went wrong");

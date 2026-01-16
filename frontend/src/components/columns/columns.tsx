@@ -43,7 +43,7 @@ export const columns: ColumnDef<ReceiptType>[] = [
         },
     },
     {
-        accessorKey: "expense_insights.category",
+        accessorKey: "expense_insights_category",
         header: "Category",
         //  cell: ({ row }: any) => {
         //     const data = row.original;

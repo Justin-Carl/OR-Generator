@@ -8,6 +8,7 @@ import { Parser } from "json2csv";
 import Details from "../models/Details.model.js";
 import Categories from "../models/Categories.model.js";
 import Receipts from "../models/Receipts.model.js";
+import { error } from "console";
 
 export default class ReceiptsService {
   constructor(RepoClass, external_service) {
@@ -45,6 +46,11 @@ export default class ReceiptsService {
     if (category_list.length > 0) {
       let m = category_list.map((x) => `- ${x.title} ${x.description} \n`);
       categories_string = m.join("", ",");
+    } else {
+      return {
+        error: true,
+        message: "No category found.",
+      };
     }
 
     const config = {
