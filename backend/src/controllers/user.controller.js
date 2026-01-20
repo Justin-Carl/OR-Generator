@@ -20,11 +20,11 @@ export default class UsersController {
     reply
       .setCookie("cookie_or_reader_07012026", encryptToken, {
         domain: "",
-        secure: true,
-        sameSite: "none",
+        // secure: true,
+        // sameSite: "none",
 
-        // secure: false,
-        // sameSite: "Lax",
+        secure: false,
+        sameSite: "Lax",
 
         path: "/",
         httpOnly: true,
@@ -41,11 +41,11 @@ export default class UsersController {
     reply
       .clearCookie("cookie_or_reader_07012026", {
         domain: "",
-        secure: true,
-        sameSite: "none",
+        // secure: true,
+        // sameSite: "none",
 
-        // secure: false,
-        // sameSite: "Lax",
+        secure: false,
+        sameSite: "Lax",
 
         path: "/",
       })
